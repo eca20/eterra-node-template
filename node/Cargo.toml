@@ -1,20 +1,21 @@
 [package]
-name = "node-template"
-version = "4.0.0-dev"
+authors     = [ "Ajuna Network <https://github.com/ajuna-network>" ]
 description = "A fresh FRAME-based Substrate node, ready for hacking."
-authors = ["Substrate DevHub <https://github.com/substrate-developer-hub>"]
-homepage = "https://substrate.io/"
-edition = "2021"
-license = "MIT-0"
-publish = false
-repository = "https://github.com/substrate-developer-hub/substrate-node-template/"
-build = "build.rs"
+edition     = "2021"
+homepage    = "https://substrate.io/"
+license     = "Apache-2.0"
+name        = "ajuna-node-template"
+repository  = "https://github.com/ajuna-network/ajuna-node-template"
+version     = "0.1.0"
+build       = "build.rs"
+publish     = false
 
 [package.metadata.docs.rs]
-targets = ["x86_64-unknown-linux-gnu"]
+targets = [ "x86_64-unknown-linux-gnu" ]
 
 [[bin]]
-name = "node-template"
+name = "ajuna-node"
+path = "./src/main.rs"
 
 [dependencies]
 clap = { version = "4.0.9", features = ["derive"] }
@@ -59,7 +60,7 @@ frame-benchmarking = { version = "4.0.0-dev", git = "https://github.com/parityte
 frame-benchmarking-cli = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.42" }
 
 # Local Dependencies
-node-template-runtime = { version = "4.0.0-dev", path = "../runtime" }
+ajuna-node-template-runtime = { version = "0.1.0", path = "../runtime" }
 
 # CLI-specific dependencies
 try-runtime-cli = { version = "0.10.0-dev", optional = true, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.42" }
@@ -71,10 +72,10 @@ substrate-build-script-utils = { version = "3.0.0", git = "https://github.com/pa
 default = []
 # Dependencies that are only required if runtime benchmarking should be build.
 runtime-benchmarks = [
-	"node-template-runtime/runtime-benchmarks",
+	"ajuna-node-template-runtime/runtime-benchmarks",
 	"frame-benchmarking/runtime-benchmarks",
 	"frame-benchmarking-cli/runtime-benchmarks",
 ]
 # Enable features that allow the runtime to be tried and debugged. Name might be subject to change
 # in the near future.
-try-runtime = ["node-template-runtime/try-runtime", "try-runtime-cli/try-runtime"]
+try-runtime = ["ajuna-node-template-runtime/try-runtime", "try-runtime-cli/try-runtime"]
