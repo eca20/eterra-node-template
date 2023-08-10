@@ -1730,15 +1730,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "dot4gravity"
-version = "0.1.0"
-source = "git+https://github.com/ajuna-network/ajuna-games?rev=7c4722c#7c4722c1f3e4b8d1c284a3f6d604ffb7f6be232c"
-dependencies = [
- "parity-scale-codec",
- "scale-info",
-]
-
-[[package]]
 name = "downcast"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4629,7 +4620,6 @@ dependencies = [
 name = "pallet-ajuna-board"
 version = "0.1.0"
 dependencies = [
- "dot4gravity",
  "frame-benchmarking",
  "frame-support",
  "frame-system",

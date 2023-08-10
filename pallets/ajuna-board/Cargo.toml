@@ -20,9 +20,10 @@ frame-benchmarking = { default-features = false, git = "https://github.com/parit
 frame-support = { default-features = false, git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.42" }
 frame-system = { default-features = false, git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.42" }
 sp-runtime = { default-features = false, git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.42" }
+sp-core = { default-features = false, git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.42" }
+sp-io = { default-features = false, git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.42" }
 sp-std = { default-features = false, git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.42" }
 
-dot4gravity = { default-features = false, git = "https://github.com/ajuna-network/ajuna-games", rev = "7c4722c" }
 pallet-ajuna-matchmaker = { default-features = false, path = "../ajuna-matchmaker" }
 
 [dev-dependencies]
@@ -30,16 +31,17 @@ sp-core = { git = "https://github.com/paritytech/substrate", branch = "polkadot-
 sp-io = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.42" }
 
 [features]
-default     = [ "std" ]
+default = [ "std" ]
 std = [
     "codec/std",
     "scale-info/std",
     "sp-runtime/std",
     "sp-std/std",
+    "sp-core/std",
+    "sp-io/std",
     "frame-benchmarking/std",
     "frame-support/std",
     "frame-system/std",
-    "dot4gravity/std",
     "pallet-ajuna-matchmaker/std"
 ]
 try-runtime = [ "frame-support/try-runtime" ]

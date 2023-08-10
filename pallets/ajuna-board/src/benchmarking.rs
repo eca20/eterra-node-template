@@ -16,7 +16,8 @@
 
 use super::*;
 use crate::{
-	dot4gravity::{Coordinates, Side, Turn},
+	dot4gravity::{Coordinates, HashSalt, Side},
+	types::Turn,
 	Pallet as AjunaBoard,
 };
 use frame_benchmarking::{account, benchmarks};
@@ -40,6 +41,7 @@ fn create_new_game<T: Config>(players: Vec<T::AccountId>) {
 }
 
 fn create_and_play_until_win<T: Config>(players: Vec<T::AccountId>) {
+	let salt = HashSalt::from_slice(&[12; 32]);
 	// The seed below generates the following board, where o is empty and x is block:
 	// [o, o, o, o, o, o, o, o, o, o],
 	// [o, o, o, x, o, o, o, o, o, o],
@@ -51,7 +53,7 @@ fn create_and_play_until_win<T: Config>(players: Vec<T::AccountId>) {
 	// [o, o, o, o, o, o, o, o, o, o],
 	// [x, o, o, o, o, o, o, o, o, o],
 	// [o, o, o, o, o, o, o, o, o, o],
-	Seed::<T>::put(7357);
+	GameSeed::<T>::put(7357);
 	create_new_game::<T>(players.clone());
 
 	let mut players = players.into_iter();
@@ -59,7 +61,7 @@ fn create_and_play_until_win<T: Config>(players: Vec<T::AccountId>) {
 	let player_2: T::RuntimeOrigin = RawOrigin::Signed(players.next().unwrap()).into();
 
 	let each_player_drops_bomb = |coord: Coordinates| {
-		let drop_bomb: T::PlayersTurn = Turn::DropBomb(coord).into();
+		let drop_bomb: T::PlayersTurn = Turn::PlaceBomb(coord, salt).into();
 		let _ = AjunaBoard::<T>::play(player_1.clone(), drop_bomb.clone());
 		let _ = AjunaBoard::<T>::play(player_2.clone(), drop_bomb);
 	};
@@ -76,20 +78,28 @@ fn create_and_play_until_win<T: Config>(players: Vec<T::AccountId>) {
 	each_player_drops_bomb(Coordinates::new(7, 7));
 
 	// Stone phase
-	let win_position = (Side::North, 0);
-	let lose_position = (Side::North, 9);
-	each_player_drops_stone(win_position, lose_position);
-	each_player_drops_stone(win_position, lose_position);
-	each_player_drops_stone(win_position, lose_position);
+	let win_position_1 = (Side::North, 0);
+	let lose_position_1 = (Side::North, 9);
+	each_player_drops_stone(win_position_1, lose_position_1);
+	each_player_drops_stone(win_position_1, lose_position_1);
+	each_player_drops_stone(win_position_1, lose_position_1);
+	each_player_drops_stone(win_position_1, lose_position_1);
+
+	let win_position_2 = (Side::South, 1);
+	let lose_position_2 = (Side::North, 7);
+	each_player_drops_stone(win_position_2, lose_position_2);
+	each_player_drops_stone(win_position_2, lose_position_2);
+	each_player_drops_stone(win_position_2, lose_position_2);
 }
 
 benchmarks! {
 	play {
+		let salt = HashSalt::from_slice(&[12; 32]);
 		let players = players::<T::AccountId>(T::Players::get());
 		create_new_game::<T>(players.clone());
 
 		let player_1 = players.into_iter().next().unwrap();
-		let turn = Turn::DropBomb(Coordinates::new(1, 2));
+		let turn = Turn::PlaceBomb(Coordinates::new(1, 2), salt);
 	}: play(RawOrigin::Signed(player_1), turn.into())
 
 	play_turn_until_finished {
@@ -98,7 +108,7 @@ benchmarks! {
 		create_and_play_until_win::<T>( players.clone());
 
 		let winner = players.into_iter().next().unwrap();
-		let turn = Turn::DropStone((Side::North, 0));
+		let turn = Turn::DropStone((Side::South, 1));
 	}: play(RawOrigin::Signed(winner.clone()), turn.into())
 	verify {
 		assert_last_event::<T>(Event::GameFinished { board_id, winner }.into());

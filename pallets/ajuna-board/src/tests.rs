@@ -79,18 +79,27 @@ fn queue_creates_game_on_successful_match() {
 #[test]
 fn play_works() {
 	new_test_ext().execute_with(|| {
-		Seed::<Test>::put(TEST_SEED);
+		let salt = HashSalt::from_low_u64_be(17);
+		GameSeed::<Test>::put(TEST_SEED);
 		assert_ok!(AjunaBoard::queue(RuntimeOrigin::signed(BOB)));
 		assert_ok!(AjunaBoard::queue(RuntimeOrigin::signed(ERIN)));
 		assert_noop!(
-			AjunaBoard::play(RuntimeOrigin::signed(ALICE), Turn::DropBomb(TEST_COORD)),
+			AjunaBoard::play(RuntimeOrigin::signed(ALICE), Turn::PlaceBomb(TEST_COORD, salt)),
 			Error::<Test>::NotPlaying
 		);
 
 		// Bomb phase
 		let drop_bomb = |coord: Coordinates| {
-			assert_ok!(AjunaBoard::play(RuntimeOrigin::signed(BOB), Turn::DropBomb(coord)));
-			assert_ok!(AjunaBoard::play(RuntimeOrigin::signed(ERIN), Turn::DropBomb(coord)));
+			assert_ok!(AjunaBoard::play(RuntimeOrigin::signed(BOB), Turn::PlaceBomb(coord, salt)));
+			assert_ok!(AjunaBoard::play(RuntimeOrigin::signed(ERIN), Turn::PlaceBomb(coord, salt)));
+			assert_ok!(AjunaBoard::play(
+				RuntimeOrigin::signed(BOB),
+				Turn::DetonateBomb(coord, salt, PowerLevel::One)
+			));
+			assert_ok!(AjunaBoard::play(
+				RuntimeOrigin::signed(ERIN),
+				Turn::DetonateBomb(coord, salt, PowerLevel::One)
+			));
 		};
 		drop_bomb(Coordinates::new(9, 9));
 		drop_bomb(Coordinates::new(8, 8));
@@ -121,7 +130,7 @@ fn play_works() {
 			board_id: BOARD_ID,
 			winner: BOB,
 		}));
-		assert_ne!(Seed::<Test>::get(), Some(TEST_SEED));
+		assert_ne!(GameSeed::<Test>::get(), Some(TEST_SEED));
 		assert!(PlayerBoards::<Test>::get(ALICE).is_none());
 		assert!(PlayerBoards::<Test>::get(BOB).is_none());
 		assert!(BoardGames::<Test>::get(BOARD_ID).is_some());

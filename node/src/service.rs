@@ -35,6 +35,8 @@ pub(crate) type FullClient =
 type FullBackend = sc_service::TFullBackend<Block>;
 type FullSelectChain = sc_consensus::LongestChain<FullBackend, Block>;
 
+#[allow(clippy::type_complexity)]
+#[allow(clippy::redundant_clone)]
 pub fn new_partial(
 	config: &Configuration,
 ) -> Result<
