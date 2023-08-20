@@ -271,7 +271,7 @@ impl pallet_ajuna_board::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type Matchmaker = pallet_ajuna_matchmaker::Matchmaking<Runtime>;
 	type BoardId = u32;
-	type PlayersTurn = pallet_ajuna_board::dot4gravity::Turn;
+	type PlayersTurn = pallet_ajuna_board::types::Turn;
 	type GameState = pallet_ajuna_board::dot4gravity::GameState<AccountId>;
 	type Game = pallet_ajuna_board::dot4gravity::Game<AccountId>;
 	type Players = frame_support::traits::ConstU32<2>;

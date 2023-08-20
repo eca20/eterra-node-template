@@ -19,10 +19,11 @@
 use codec::{Codec, Decode, Encode};
 use frame_support::pallet_prelude::*;
 use frame_system::{ensure_signed, pallet_prelude::*};
-pub use pallet::*;
 use pallet_ajuna_matchmaker::{Matchmaker, DEFAULT_BRACKET};
 use sp_runtime::traits::{AtLeast32BitUnsigned, BlockNumberProvider, Saturating};
 use sp_std::vec::Vec;
+
+pub use pallet::*;
 
 #[cfg(feature = "runtime-benchmarks")]
 mod benchmarking;
@@ -34,7 +35,8 @@ mod mock;
 mod tests;
 
 pub mod dot4gravity;
-mod types;
+pub mod types;
+
 use types::*;
 
 #[frame_support::pallet]
@@ -48,7 +50,7 @@ pub mod pallet {
 		/// Board id
 		type BoardId: Copy + Default + AtLeast32BitUnsigned + Parameter + MaxEncodedLen;
 		/// A Turn for the game
-		type PlayersTurn: Member + Parameter + From<dot4gravity::Turn>;
+		type PlayersTurn: Member + Parameter + From<Turn>;
 		/// The state of the board
 		type GameState: Codec + TypeInfo + MaxEncodedLen + Clone;
 		/// A turn based game
@@ -106,7 +108,7 @@ pub mod pallet {
 
 	/// Random seed
 	#[pallet::storage]
-	pub type Seed<T> = StorageValue<_, u32>;
+	pub type GameSeed<T> = StorageValue<_, u32>;
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
@@ -174,7 +176,7 @@ impl<T: Config> Pallet<T> {
 		}
 
 		let board_id = NextBoardId::<T>::get();
-		let seed = Seed::<T>::get();
+		let seed = GameSeed::<T>::get();
 		let state = T::Game::init(&players, seed).ok_or(Error::<T>::InvalidGameState)?;
 		Self::seed_for_next(&state);
 
@@ -191,8 +193,8 @@ impl<T: Config> Pallet<T> {
 
 	fn seed_for_next(game_state: &T::GameState) {
 		match T::Game::seed(game_state) {
-			Some(seed) => Seed::<T>::put(seed),
-			None => Seed::<T>::kill(),
+			Some(seed) => GameSeed::<T>::put(seed),
+			None => GameSeed::<T>::kill(),
 		}
 	}
 

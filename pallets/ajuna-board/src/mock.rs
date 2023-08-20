@@ -48,7 +48,6 @@ impl frame_system::Config for Test {
 	type BaseCallFilter = frame_support::traits::Everything;
 	type BlockWeights = ();
 	type BlockLength = ();
-	type DbWeight = ();
 	type RuntimeOrigin = RuntimeOrigin;
 	type RuntimeCall = RuntimeCall;
 	type Index = u64;
@@ -60,6 +59,7 @@ impl frame_system::Config for Test {
 	type Header = Header;
 	type RuntimeEvent = RuntimeEvent;
 	type BlockHashCount = BlockHashCount;
+	type DbWeight = ();
 	type Version = ();
 	type PalletInfo = PalletInfo;
 	type AccountData = ();
@@ -83,7 +83,7 @@ impl pallet_ajuna_board::Config for Test {
 	type RuntimeEvent = RuntimeEvent;
 	type Matchmaker = pallet_ajuna_matchmaker::Matchmaking<Self>;
 	type BoardId = u32;
-	type PlayersTurn = crate::dot4gravity::Turn;
+	type PlayersTurn = crate::types::Turn;
 	type GameState = crate::dot4gravity::GameState<MockAccountId>;
 	type Game = crate::dot4gravity::Game<MockAccountId>;
 	type Players = Players;
